@@ -1,0 +1,57 @@
+float LineSegment::getXmin() const {
+	// IMPLEMENT ME
+    if(p1_.getX() < p2_.getX()){
+        return p1_.getX();
+    }
+    else if(p1_.getX() == p2_.getX()){
+        return p1_.getX();
+    }
+    else
+	    return p2_.getX(); // dummy
+}
+
+float LineSegment::getXmax() const {
+    // IMPLEMENT ME
+    if(p1_.getX() > p2_.getX()){
+        return p1_.getX();
+    }
+    else if(p1_.getX() == p2_.getX()){
+        return p1_.getX();
+    }
+    else
+        return p2_.getX(); // dummy
+}
+
+float LineSegment::getYmin() const {
+	// IMPLEMENT
+    if(p1_.getY() < p2_.getY()){
+        return p1_.getY();
+    }
+    else if(p1_.getY() == p2_.getY()){
+        return p1_.getY();
+    }
+    else
+	    return p2_.getY(); // dummy
+}
+
+float LineSegment::getYmax() const {
+	// IMPLEMENT ME
+    if(p1_.getY() > p2_.getY()){
+        return p1_.getY();
+    }
+    else if(p1_.getY() == p2_.getY()){
+        return p1_.getY();
+    }
+    else
+        return p2_.getY(); // dummy
+}
+
+float LineSegment::length() const {
+	// IMPLEMENT ME
+    if(getYmax() - getYmin() != 0){
+        return getYmax() - getYmin();
+    }
+    else if(getXmax() - getXmin() != 0){
+        return getXmax() - getXmin(); // dummy
+    }
+}

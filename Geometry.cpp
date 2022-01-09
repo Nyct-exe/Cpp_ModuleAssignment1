@@ -31,10 +31,13 @@ int Shape::dim() const {
 
 void Shape::translate(float x, float y) {
 	// IMPLEMENT ME
+    x_ = x_ + x;
+    y_ = y_ + y;
 }
 
 void Shape::rotate() {
 	// IMPLEMENT ME
+
 }
 
 void Shape::scale(float f) {
@@ -42,58 +45,113 @@ void Shape::scale(float f) {
 }
 
 bool Shape::contains(const Point& p) const {
-	// IMPLEMENT ME
-	return false; // dummy
+	// IMPLEMENT ME (NOT FINISHED)
+    if(p.getX() == x_ & p.getY() == y_ ){
+        return true;
+    }
+    else{
+        return false; // dummy
+    }
 }
 
 // =============== Point class ================
 
 Point::Point(float x, float y, int d) {
 	// IMPLEMENT ME
-    this->x = x;
-    this->y = y;
-    this->depth = d;
+    x_ = x;
+    y_ = y;
+    depth = d;
 }
 
 float Point::getX() const {
 	// IMPLEMENT ME
-	return x; // dummy
+	return x_; // dummy
 }
 
 float Point::getY() const {
 	// IMPLEMENT ME
-	return y; // dummy
+	return y_; // dummy
 }
+
 
 // =========== LineSegment class ==============
 
 LineSegment::LineSegment(const Point& p, const Point& q) {
 	// IMPLEMENT ME
+
+    if(p.getDepth() != q.getDepth()){
+        throw std::invalid_argument("Points are on different depths");
+    }
+    else if (p.getX() == q.getX() && p.getY() == q.getY()){
+        throw std::invalid_argument("Points are Colliding");
+    }
+    else if(p.getX() != q.getX() && p.getY() != q.getY()){
+        throw std::invalid_argument("Points are not horizontal/vertical to each other");
+    }
+    else
+        //This might be cheating
+        depth = p.getDepth();
+    // ^^^^^^^^^^^^^^^^^^^^^^^^^^
+        x1_ = p.getX(); y1_ = p.getY();
+        x2_ = q.getX(); y2_ = q.getY();
 }
 
 float LineSegment::getXmin() const {
 	// IMPLEMENT ME
-	return -999; // dummy
+    if(x1_ < x2_){
+        return x1_;
+    }
+    else if(x1_ == x2_){
+        return x1_;
+    }
+    else
+	    return x2_; // dummy
 }
 
 float LineSegment::getXmax() const {
-	// IMPLEMENT ME
-	return -999; // dummy
+    // IMPLEMENT ME
+    if(x1_ > x2_){
+        return x1_;
+    }
+    else if(x1_ == x2_){
+        return x1_;
+    }
+    else
+        return x2_; // dummy
 }
 
 float LineSegment::getYmin() const {
-	// IMPLEMENT ME
-	return -999; // dummy
+	// IMPLEMENT
+    if(y1_ < y2_){
+        return y1_;
+    }
+    else if(y1_ == y2_){
+        return y1_;
+    }
+    else
+        return y2_; // dummy
 }
 
 float LineSegment::getYmax() const {
 	// IMPLEMENT ME
-	return -999; // dummy
+    if(y1_ > y2_){
+        return y1_;
+    }
+    else if(y1_ == y2_){
+        return y1_;
+    }
+    else
+        return y2_; // dummy
 }
 
 float LineSegment::length() const {
 	// IMPLEMENT ME
-	return -999; // dummy
+    if(getYmax() - getYmin() != 0){
+        return getYmax() - getYmin();
+    }
+    else if(getXmax() - getXmin() != 0){
+        return getXmax() - getXmin(); // dummy
+    }
 }
 
 // ============ TwoDShape class ================

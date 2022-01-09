@@ -10,7 +10,7 @@ class Shape {
 
 public:
 	// Default constructor, just to make this release version compilable.
-	// If your implementation is correct this should be removed
+//	// If your implementation is correct this should be removed
 	Shape();
 
 	// Constructor specifying the depth of the object.
@@ -45,6 +45,7 @@ public:
 	static constexpr double PI = 3.1415926;
 
 protected:
+    float x_, y_;
     int depth;
 private:
 	// add any protected/private member variables you need
@@ -57,13 +58,14 @@ public:
 	// Constructor. Depth defaults to 0
 	Point(float x, float y, int d=0);
 
-	// Return basic information (see assignment page)
+    // Return basic information (see assignment page)
 	float getX() const;
 	float getY() const;
 
 private:
 	// add any member variables you need
-    float x, y;
+//    int depth;
+
 };
 
 class LineSegment : public Shape {
@@ -86,6 +88,7 @@ public:
 
 private:
 	// add any member variables you need
+    float x1_,x2_,y1_,y2_;
 };
 
 class TwoDShape : public Shape {
@@ -122,6 +125,7 @@ public:
 
 private:
 	// add any member variables you need
+//    int depth;
 };
 
 class Circle : public TwoDShape {
