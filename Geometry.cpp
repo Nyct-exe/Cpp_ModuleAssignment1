@@ -73,6 +73,14 @@ float Point::getY() const {
 	return y_; // dummy
 }
 
+float Point::setX(float x) {
+        x_ = x;
+}
+
+float Point::setY(float y) {
+    y_ = y;
+}
+
 
 // =========== LineSegment class ==============
 
@@ -89,59 +97,59 @@ LineSegment::LineSegment(const Point& p, const Point& q) {
         throw std::invalid_argument("Points are not horizontal/vertical to each other");
     }
     else
+        p1_ = Point(p.getX(),p.getY(),p.getDepth());
+        p2_ = Point(q.getX(),q.getY(),q.getDepth());
         //This might be cheating
         depth = p.getDepth();
     // ^^^^^^^^^^^^^^^^^^^^^^^^^^
-        x1_ = p.getX(); y1_ = p.getY();
-        x2_ = q.getX(); y2_ = q.getY();
 }
 
 float LineSegment::getXmin() const {
 	// IMPLEMENT ME
-    if(x1_ < x2_){
-        return x1_;
+    if(p1_.getX() < p2_.getX()){
+        return p1_.getX();
     }
-    else if(x1_ == x2_){
-        return x1_;
+    else if(p1_.getX() == p2_.getX()){
+        return p1_.getX();
     }
     else
-	    return x2_; // dummy
+        return p2_.getX(); // dummy
 }
 
 float LineSegment::getXmax() const {
     // IMPLEMENT ME
-    if(x1_ > x2_){
-        return x1_;
+    if(p1_.getX() > p2_.getX()){
+        return p1_.getX();
     }
-    else if(x1_ == x2_){
-        return x1_;
+    else if(p1_.getX() == p2_.getX()){
+        return p1_.getX();
     }
     else
-        return x2_; // dummy
+        return p2_.getX(); // dummy
 }
 
 float LineSegment::getYmin() const {
-	// IMPLEMENT
-    if(y1_ < y2_){
-        return y1_;
+    // IMPLEMENT
+    if(p1_.getY() < p2_.getY()){
+        return p1_.getY();
     }
-    else if(y1_ == y2_){
-        return y1_;
+    else if(p1_.getY() == p2_.getY()){
+        return p1_.getY();
     }
     else
-        return y2_; // dummy
+        return p2_.getY(); // dummy
 }
 
 float LineSegment::getYmax() const {
-	// IMPLEMENT ME
-    if(y1_ > y2_){
-        return y1_;
+    // IMPLEMENT ME
+    if(p1_.getY() > p2_.getY()){
+        return p1_.getY();
     }
-    else if(y1_ == y2_){
-        return y1_;
+    else if(p1_.getY() == p2_.getY()){
+        return p1_.getY();
     }
     else
-        return y2_; // dummy
+        return p2_.getY(); // dummy
 }
 
 float LineSegment::length() const {
@@ -157,41 +165,85 @@ float LineSegment::length() const {
 // My Overrides
 
 void LineSegment::translate(float x, float y) {
-    x1_ = x1_ + x; x2_ = x2_ + x;
-    y1_ = y1_ + y; y2_ = y2_ + y;
+    
+    int x1 = p1_.getX(); int y1 = p1_.getY();
+    int x2 = p2_.getX(); int y2 = p2_.getY();
+    
+    p1_.setX(x1 + x); p2_.setX(x2 + x);
+    p1_.setY(y1 + y); p2_.setY(y2 + y);
+//    x1_ = x1_ + x ; x2_ = x2_ + x;
+//    y1_ = y1_ + y; y2_ = y2_ + y;
 
 }
 
 void LineSegment::rotate(){
-    // TODO: Try putting this in the Shape, since it might work
-
+    int x1 = p1_.getX(); int y1 = p1_.getY();
+    int x2 = p2_.getX(); int y2 = p2_.getY();
+    
+    
     // Finds The center to rotate around
-    float center_x = (x1_ + x2_) / 2;
-    float center_y = (y1_ + y2_) / 2;
+    float center_x = (x1 + x2) / 2;
+    float center_y = (y1 + y2) / 2;
 
     // Moves the line segment to the center
-    x1_ -= center_x;  x2_ -= center_x;
-    y1_ -= center_y;  y2_ -= center_y;
+    x1 -= center_x;  x2 -= center_x;
+    y1 -= center_y;  y2 -= center_y;
 
     //Rotates Both Points
-    float xtemp = x1_; float ytemp = y1_;
-    x1_ = -ytemp; y1_ = xtemp;
+    float xtemp = x1; float ytemp = y1;
+    x1 = -ytemp; y1 = xtemp;
 
-    xtemp = x2_; ytemp = y2_;
-    x2_ = -ytemp; y2_ = xtemp;
+    xtemp = x2; ytemp = y2;
+    x2 = -ytemp; y2 = xtemp;
 
     //Moves the line segment to the original position
-    x1_ += center_x; x2_ += center_x;
-    y1_ += center_y; y2_ += center_y;
+    x1 += center_x; x2 += center_x;
+    y1 += center_y; y2 += center_y;
+
+    //Setting new values
+    p1_.setX(x1); p1_.setY(y1);
+    p2_.setX(x2); p2_.setY(y2);
 }
 
 bool LineSegment::contains(const Point &p) const {
-//    if((p.getX() == x1_ && p.getY() == y1_) || (p.getX() == x2_ && p.getY() == y2_ )){
-//        return true;
-//    }
-//    else{
-//        return false; // dummy
-//    }
+
+    if(((getXmin() <= p.getX()) && (p.getX() <= getXmax()))
+    && ((getYmin() <= p.getY()) && (p.getY() <= getYmax()))){
+       return true;
+    }else{
+        return false;
+    }
+}
+
+void LineSegment::scale(float f) {
+    if(f <= 0){
+        throw std::invalid_argument("Scaling factor cannot be zero or negative");
+    }
+    // Getting X and Y coordinates of points
+    int x1 = p1_.getX(); int y1 = p1_.getY();
+    int x2 = p2_.getX(); int y2 = p2_.getY();
+
+    // Finds The center to rotate around
+    float center_x = (x1 + x2) / 2;
+    float center_y = (y1 + y2) / 2;
+
+    // Moves the line segment to the center
+    x1 -= center_x;  x2 -= center_x;
+    y1 -= center_y;  y2 -= center_y;
+
+    // Applies scaling to both points
+    x1 *= f; x2 *= f;
+    y1 *= f; y2 *= f;
+
+    //Moves the line segment to the original position
+    x1 += center_x; x2 += center_x;
+    y1 += center_y; y2 += center_y;
+
+    //Setting new values
+    p1_.setX(x1); p1_.setY(y1);
+    p2_.setX(x2); p2_.setY(y2);
+
+
 
 }
 
@@ -214,26 +266,96 @@ float TwoDShape::area() const {
 
 Rectangle::Rectangle(const Point& p, const Point& q) {
 	// IMPLEMENT ME
+    if(p.getDepth() != q.getDepth()){
+        throw std::invalid_argument("Points are on different depths");
+    }
+    else if (p.getX() == q.getX() && p.getY() == q.getY()){
+        throw std::invalid_argument("Points are Colliding");
+    }
+    else if(p.getX() == q.getX() && p.getY() == q.getY()){
+        throw std::invalid_argument("Points are horizontal/vertical to each other");
+    }
+    else
+        p1_ = Point(p.getX(),p.getY(),p.getDepth());
+        p2_ = Point(q.getX(),q.getY(),q.getDepth());
+        p3_ = Point(q.getX(),p.getY(),p.getDepth());
+        p4_ = Point(p.getX(),q.getY(),q.getDepth());
+        //TODO: Make an override function
+        depth = p.getDepth();
+
 }
 
 float Rectangle::getXmin() const {
 	// IMPLEMENT ME
-	return -999; // dummy
+    float arr[4] = {p1_.getX(),p2_.getX(),p3_.getX(),p4_.getX()};
+    float minX=p1_.getX();
+    for(int i = 0; i<4; i++){
+        if(arr[i]<minX){
+            minX = arr[i];
+        }
+    }
+	return minX;
 }
 
 float Rectangle::getYmin() const {
 	// IMPLEMENT ME
-	return -999; // dummy
+    float arr[4] = {p1_.getY(),p2_.getY(),p3_.getY(),p4_.getY()};
+    float minY=p1_.getY();
+    for(int i = 0; i<4; i++){
+        if(arr[i]<minY){
+            minY = arr[i];
+        }
+    }
+    return minY;
 }
 
 float Rectangle::getXmax() const {
 	// IMPLEMENT ME
-	return -999; // dummy
+    float arr[4] = {p1_.getX(),p2_.getX(),p3_.getX(),p4_.getX()};
+    float maxX=p1_.getX();
+    for(int i = 0; i<4; i++){
+        if(arr[i]>maxX){
+            maxX = arr[i];
+        }
+    }
+    return maxX;
 }
 
 float Rectangle::getYmax() const {
 	// IMPLEMENT ME
-	return -999; // dummy
+    float arr[4] = {p1_.getY(),p2_.getY(),p3_.getY(),p4_.getY()};
+    float maxY=p1_.getY();
+    for(int i = 0; i<4; i++){
+        if(arr[i]>maxY){
+            maxY = arr[i];
+        }
+    }
+    return maxY;
+}
+
+// Overrides
+
+void Rectangle::translate(float x, float y) {
+    Point arr[4] = {p1_,p2_,p3_,p4_};
+    for(int i = 0; i<4; i++){
+        arr[i].setX(arr[i].getX() + x);
+        arr[i].setY(arr[i].getY() + y);
+    }
+}
+
+void Rectangle::rotate() {
+//    Point arr[4] = {p1_,p2_,p3_,p4_};
+//    for(int i = 0; i<4; i++){
+//
+//    }
+}
+
+bool Rectangle::contains(const Point &p) const {
+
+}
+
+void Rectangle::scale(float f) {
+
 }
 
 // ================== Circle class ===================

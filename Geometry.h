@@ -33,7 +33,7 @@ public:
     virtual // Rotate the object 90 degrees around its centre
 	void rotate();
 
-	// Scale the object by a factor f relative to its centre.
+    virtual // Scale the object by a factor f relative to its centre.
 	// If f is zero or negative, throw a std::invalid-argument exception.
 	void scale(float f);
 
@@ -62,6 +62,9 @@ public:
     // Return basic information (see assignment page)
 	float getX() const;
 	float getY() const;
+
+    float setX(float x);
+    float setY(float y);
 
 private:
 	// add any member variables you need
@@ -93,9 +96,12 @@ public:
 
     bool contains(const Point &p) const override;
 
+    void scale(float f) override;
+
 private:
 	// add any member variables you need
-    float x1_,x2_,y1_,y2_;
+    Point p1_ = Point(0, 0), p2_ = Point(0, 0);
+
 };
 
 class TwoDShape : public Shape {
@@ -130,9 +136,20 @@ public:
 	float getXmax() const;
 	float getYmax() const;
 
+    void translate(float x, float y) override;
+
+    bool contains(const Point &p) const override;
+
+    void rotate() override;
+
+    void scale(float f) override;
+
 private:
 	// add any member variables you need
 //    int depth;
+    Point p1_ = Point(0, 0), p2_ = Point(0, 0);
+    Point p3_ = Point(0, 0), p4_ = Point(0, 0);
+
 };
 
 class Circle : public TwoDShape {
