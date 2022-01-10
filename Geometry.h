@@ -27,10 +27,10 @@ public:
 	// Return the dimension of the object (0, 1 or 2)
 	int dim() const;
 
-	// Translate the object horizontally by x and vertically by y
+    virtual // Translate the object horizontally by x and vertically by y
 	void translate(float x, float y);
 
-	// Rotate the object 90 degrees around its centre
+    virtual // Rotate the object 90 degrees around its centre
 	void rotate();
 
 	// Scale the object by a factor f relative to its centre.
@@ -39,6 +39,7 @@ public:
 
 	// Return true if the object contains p and false otherwise.
 	// Depths are ignored for purpose of comparison
+    virtual
 	bool contains(const Point& p) const;
 
 	// the constant pi
@@ -85,6 +86,12 @@ public:
 
 	// Return the length of the line segment
 	float length() const;
+
+    void translate(float x, float y) override;
+
+    void rotate() override;
+
+    bool contains(const Point &p) const override;
 
 private:
 	// add any member variables you need

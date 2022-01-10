@@ -46,7 +46,7 @@ void Shape::scale(float f) {
 
 bool Shape::contains(const Point& p) const {
 	// IMPLEMENT ME (NOT FINISHED)
-    if(p.getX() == x_ & p.getY() == y_ ){
+    if(p.getX() == x_ && p.getY() == y_ ){
         return true;
     }
     else{
@@ -153,6 +153,49 @@ float LineSegment::length() const {
         return getXmax() - getXmin(); // dummy
     }
 }
+
+// My Overrides
+
+void LineSegment::translate(float x, float y) {
+    x1_ = x1_ + x; x2_ = x2_ + x;
+    y1_ = y1_ + y; y2_ = y2_ + y;
+
+}
+
+void LineSegment::rotate(){
+    // TODO: Try putting this in the Shape, since it might work
+
+    // Finds The center to rotate around
+    float center_x = (x1_ + x2_) / 2;
+    float center_y = (y1_ + y2_) / 2;
+
+    // Moves the line segment to the center
+    x1_ -= center_x;  x2_ -= center_x;
+    y1_ -= center_y;  y2_ -= center_y;
+
+    //Rotates Both Points
+    float xtemp = x1_; float ytemp = y1_;
+    x1_ = -ytemp; y1_ = xtemp;
+
+    xtemp = x2_; ytemp = y2_;
+    x2_ = -ytemp; y2_ = xtemp;
+
+    //Moves the line segment to the original position
+    x1_ += center_x; x2_ += center_x;
+    y1_ += center_y; y2_ += center_y;
+}
+
+bool LineSegment::contains(const Point &p) const {
+//    if((p.getX() == x1_ && p.getY() == y1_) || (p.getX() == x2_ && p.getY() == y2_ )){
+//        return true;
+//    }
+//    else{
+//        return false; // dummy
+//    }
+
+}
+
+
 
 // ============ TwoDShape class ================
 
