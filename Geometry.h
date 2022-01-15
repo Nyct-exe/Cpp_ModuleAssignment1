@@ -11,7 +11,7 @@ class Shape {
 public:
 	// Default constructor, just to make this release version compilable.
 //	// If your implementation is correct this should be removed
-	Shape();
+	Shape() = delete;
 
 	// Constructor specifying the depth of the object.
 	// If d is negative, throw a std::invalid_argument exception.
@@ -47,7 +47,7 @@ public:
 
 protected:
     float x_, y_;
-    int depth;
+    int depth_;
     int dimension_;
 private:
 	// add any protected/private member variables you need

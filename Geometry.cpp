@@ -3,8 +3,6 @@
 
 // ============ Shape class =================
 
-Shape::Shape() {} // REMOVE ME
-
 Shape::Shape(int d) {
 	// IMPLEMENT ME
     if(d < 0){
@@ -14,7 +12,7 @@ Shape::Shape(int d) {
 
 bool Shape::setDepth(int d) {
     if(d>=0){
-        depth = d;
+        depth_ = d;
         return true;
     }
     else{
@@ -23,7 +21,7 @@ bool Shape::setDepth(int d) {
 }
 
 int Shape::getDepth() const {
-	return depth;
+	return depth_;
 }
 
 int Shape::dim() const {
@@ -43,6 +41,10 @@ void Shape::rotate() {
 
 void Shape::scale(float f) {
 	// IMPLEMENT ME
+    // You can't scale a point, this is used just to check if scale is <= 0;
+    if(f <= 0){
+        throw std::invalid_argument("Scaling factor cannot be zero or negative");
+    }
 }
 
 bool Shape::contains(const Point& p) const {
@@ -57,11 +59,14 @@ bool Shape::contains(const Point& p) const {
 
 // =============== Point class ================
 
-Point::Point(float x, float y, int d) {
+Point::Point(float x, float y, int d) : Shape(d) {
 	// IMPLEMENT ME
+    if(d < 0){
+        throw std::invalid_argument("Negative Depth is not allowed");
+    }
     x_ = x;
     y_ = y;
-    depth = d;
+    depth_ = d;
     dimension_ = 0;
 }
 
@@ -86,7 +91,7 @@ void Point::setY(float y) {
 
 // =========== LineSegment class ==============
 
-LineSegment::LineSegment(const Point& p, const Point& q) {
+LineSegment::LineSegment(const Point& p, const Point& q) : Shape(p.getDepth()) {
 	// IMPLEMENT ME
 
     if(p.getDepth() != q.getDepth()){
@@ -102,7 +107,7 @@ LineSegment::LineSegment(const Point& p, const Point& q) {
         p1_ = Point(p.getX(),p.getY(),p.getDepth());
         p2_ = Point(q.getX(),q.getY(),q.getDepth());
         //This might be cheating
-        depth = p.getDepth();
+        depth_ = p.getDepth();
     // ^^^^^^^^^^^^^^^^^^^^^^^^^^
         dimension_ = 1;
 }
@@ -171,7 +176,7 @@ void LineSegment::translate(float x, float y) {
 
     float x1 = p1_.getX(); float y1 = p1_.getY();
     float x2 = p2_.getX(); float y2 = p2_.getY();
-    
+
     p1_.setX(x1 + x); p2_.setX(x2 + x);
     p1_.setY(y1 + y); p2_.setY(y2 + y);
 //    x1_ = x1_ + x ; x2_ = x2_ + x;
@@ -182,8 +187,8 @@ void LineSegment::translate(float x, float y) {
 void LineSegment::rotate(){
     float x1 = p1_.getX(); float y1 = p1_.getY();
     float x2 = p2_.getX(); float y2 = p2_.getY();
-    
-    
+
+
     // Finds The center to rotate around
     float center_x = (x1 + x2) / 2;
     float center_y = (y1 + y2) / 2;
@@ -254,10 +259,10 @@ void LineSegment::scale(float f) {
 
 // ============ TwoDShape class ================
 
-TwoDShape::TwoDShape(int d) {
+TwoDShape::TwoDShape(int d) : Shape(d) {
 	// IMPLEMENT ME
     dimension_ = 2;
-    depth = d;
+    depth_ = d;
 }
 
  float TwoDShape::area() const {
@@ -269,25 +274,24 @@ TwoDShape::~TwoDShape() {}
 
 // ============== Rectangle class ================
 
-Rectangle::Rectangle(const Point& p, const Point& q) : TwoDShape(depth) {
+Rectangle::Rectangle(const Point& p, const Point& q) : TwoDShape(p.getDepth()) {
 	// IMPLEMENT ME
-    if(p.getDepth() != q.getDepth()){
+    if(p.getDepth() != q.getDepth())
         throw std::invalid_argument("Points are on different depths");
-    }
-    else if (p.getX() == q.getX() && p.getY() == q.getY()){
+    if (p.getX() == q.getX() && p.getY() == q.getY())
         throw std::invalid_argument("Points are Colliding");
-    }
-    else if(p.getX() == q.getX() && p.getY() == q.getY()){
+    if(p.getX() == q.getX() && p.getY() == q.getY())
         throw std::invalid_argument("Points are horizontal/vertical to each other");
-    }
-    else
-        p1_ = Point(p.getX(),p.getY(),p.getDepth());
-        p2_ = Point(q.getX(),q.getY(),q.getDepth());
-        p3_ = Point(q.getX(),p.getY(),p.getDepth());
-        p4_ = Point(p.getX(),q.getY(),q.getDepth());
-        //TODO: Make an override function
-        depth = p.getDepth();
-        dimension_ = 2;
+    if(p.getX() == q.getX() || p.getY() == q.getY())
+        throw std::invalid_argument("Two points on the same coordinate");
+
+    p1_ = Point(p.getX(),p.getY(),p.getDepth());
+    p2_ = Point(q.getX(),q.getY(),q.getDepth());
+    p3_ = Point(q.getX(),p.getY(),p.getDepth());
+    p4_ = Point(p.getX(),q.getY(),q.getDepth());
+    //TODO: Make an override function
+    depth_ = p.getDepth();
+    dimension_ = 2;
 
 }
 
@@ -437,14 +441,14 @@ float Rectangle::area() const {
 
 // ================== Circle class ===================
 
-Circle::Circle(const Point& c, float r) : TwoDShape(depth) {
+Circle::Circle(const Point& c, float r) : TwoDShape(c.getDepth()) {
 	// IMPLEMENT ME
     if(r <= 0){
         throw std::invalid_argument("Radius cannot be <= 0");
     } else
         p1_ = Point(c.getX(),c.getY(),c.getDepth());
         r_ = r;
-        depth = c.getDepth();
+        depth_ = c.getDepth();
         dimension_ = 2;
 
 }
