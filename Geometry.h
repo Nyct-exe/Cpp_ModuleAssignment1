@@ -24,7 +24,7 @@ public:
 	// Return the depth of object
 	int getDepth() const;
 
-	// Return the dimension of the object (0, 1 or 2)
+	// Return the dimension_ of the object (0, 1 or 2)
 	int dim() const;
 
     virtual // Translate the object horizontally by x and vertically by y
@@ -48,9 +48,10 @@ public:
 protected:
     float x_, y_;
     int depth;
+    int dimension_;
 private:
 	// add any protected/private member variables you need
-    int dimension;
+//    int dimension_;
 };
 
 class Point : public Shape {
@@ -63,8 +64,8 @@ public:
 	float getX() const;
 	float getY() const;
 
-    float setX(float x);
-    float setY(float y);
+    void setX(float x);
+    void setY(float y);
 
 private:
 	// add any member variables you need
@@ -109,13 +110,18 @@ class TwoDShape : public Shape {
 public:
 	// Default constructor.
 	// Similar comment to Student default constructor applies
-	TwoDShape();
+    TwoDShape() = delete;
+
+
+    virtual ~TwoDShape();
+
 
 	// Constructor specifying the depth d
-	TwoDShape(int d);
+	 TwoDShape(int d);
 
-	// Return the area of the object
-	float area() const;
+
+    // Return the area of the object
+     virtual float area() const;
 
 protected:
 private:
@@ -144,12 +150,13 @@ public:
 
     void scale(float f) override;
 
+    float area() const override;
+
 private:
 	// add any member variables you need
 //    int depth;
     Point p1_ = Point(0, 0), p2_ = Point(0, 0);
     Point p3_ = Point(0, 0), p4_ = Point(0, 0);
-
 };
 
 class Circle : public TwoDShape {
@@ -164,8 +171,20 @@ public:
 	float getY() const;
 	float getR() const;
 
+    bool contains(const Point &p) const;
+
+    void translate(float x, float y);
+
+    void scale(float f);
+
+    void setR(float r);
+
+    float area() const override;
+
 private:
 	// add any member variables you need
+    Point p1_ = Point(0, 0);
+    float r_;
 };
 
 

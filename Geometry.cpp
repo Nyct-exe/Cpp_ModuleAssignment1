@@ -1,4 +1,5 @@
 #include "Geometry.h"
+#include <math.h>
 
 // ============ Shape class =================
 
@@ -12,7 +13,7 @@ Shape::Shape(int d) {
 }
 
 bool Shape::setDepth(int d) {
-    if(d>0){
+    if(d>=0){
         depth = d;
         return true;
     }
@@ -26,7 +27,7 @@ int Shape::getDepth() const {
 }
 
 int Shape::dim() const {
-	return dimension; // dummy
+	return dimension_; // dummy
 }
 
 void Shape::translate(float x, float y) {
@@ -61,6 +62,7 @@ Point::Point(float x, float y, int d) {
     x_ = x;
     y_ = y;
     depth = d;
+    dimension_ = 0;
 }
 
 float Point::getX() const {
@@ -73,11 +75,11 @@ float Point::getY() const {
 	return y_; // dummy
 }
 
-float Point::setX(float x) {
+void Point::setX(float x) {
         x_ = x;
 }
 
-float Point::setY(float y) {
+void Point::setY(float y) {
     y_ = y;
 }
 
@@ -102,6 +104,7 @@ LineSegment::LineSegment(const Point& p, const Point& q) {
         //This might be cheating
         depth = p.getDepth();
     // ^^^^^^^^^^^^^^^^^^^^^^^^^^
+        dimension_ = 1;
 }
 
 float LineSegment::getXmin() const {
@@ -165,9 +168,9 @@ float LineSegment::length() const {
 // My Overrides
 
 void LineSegment::translate(float x, float y) {
-    
-    int x1 = p1_.getX(); int y1 = p1_.getY();
-    int x2 = p2_.getX(); int y2 = p2_.getY();
+
+    float x1 = p1_.getX(); float y1 = p1_.getY();
+    float x2 = p2_.getX(); float y2 = p2_.getY();
     
     p1_.setX(x1 + x); p2_.setX(x2 + x);
     p1_.setY(y1 + y); p2_.setY(y2 + y);
@@ -177,8 +180,8 @@ void LineSegment::translate(float x, float y) {
 }
 
 void LineSegment::rotate(){
-    int x1 = p1_.getX(); int y1 = p1_.getY();
-    int x2 = p2_.getX(); int y2 = p2_.getY();
+    float x1 = p1_.getX(); float y1 = p1_.getY();
+    float x2 = p2_.getX(); float y2 = p2_.getY();
     
     
     // Finds The center to rotate around
@@ -220,8 +223,8 @@ void LineSegment::scale(float f) {
         throw std::invalid_argument("Scaling factor cannot be zero or negative");
     }
     // Getting X and Y coordinates of points
-    int x1 = p1_.getX(); int y1 = p1_.getY();
-    int x2 = p2_.getX(); int y2 = p2_.getY();
+    float x1 = p1_.getX(); float y1 = p1_.getY();
+    float x2 = p2_.getX(); float y2 = p2_.getY();
 
     // Finds The center to rotate around
     float center_x = (x1 + x2) / 2;
@@ -251,20 +254,22 @@ void LineSegment::scale(float f) {
 
 // ============ TwoDShape class ================
 
-TwoDShape::TwoDShape(){} // REMOVE ME
-
 TwoDShape::TwoDShape(int d) {
 	// IMPLEMENT ME
+    dimension_ = 2;
+    depth = d;
 }
 
-float TwoDShape::area() const {
+ float TwoDShape::area() const {
 	// IMPLEMENT ME
 	return -999; // dummy
 }
 
+TwoDShape::~TwoDShape() {}
+
 // ============== Rectangle class ================
 
-Rectangle::Rectangle(const Point& p, const Point& q) {
+Rectangle::Rectangle(const Point& p, const Point& q) : TwoDShape(depth) {
 	// IMPLEMENT ME
     if(p.getDepth() != q.getDepth()){
         throw std::invalid_argument("Points are on different depths");
@@ -282,6 +287,7 @@ Rectangle::Rectangle(const Point& p, const Point& q) {
         p4_ = Point(p.getX(),q.getY(),q.getDepth());
         //TODO: Make an override function
         depth = p.getDepth();
+        dimension_ = 2;
 
 }
 
@@ -336,47 +342,156 @@ float Rectangle::getYmax() const {
 // Overrides
 
 void Rectangle::translate(float x, float y) {
-    Point arr[4] = {p1_,p2_,p3_,p4_};
+
+    Point* arr[4] = {&p1_,&p2_,&p3_,&p4_};
     for(int i = 0; i<4; i++){
-        arr[i].setX(arr[i].getX() + x);
-        arr[i].setY(arr[i].getY() + y);
+        arr[i]->setX(arr[i]->getX() + x);
+        arr[i]->setY(arr[i]->getY() + y);
     }
 }
 
 void Rectangle::rotate() {
-//    Point arr[4] = {p1_,p2_,p3_,p4_};
-//    for(int i = 0; i<4; i++){
-//
-//    }
+    // The same as Line Segments
+
+    float x1 = p1_.getX(); float y1 = p1_.getY();
+    float x2 = p2_.getX(); float y2 = p2_.getY();
+
+
+    // Finds The center to rotate around
+    float center_x = (x1 + x2) / 2;
+    float center_y = (y1 + y2) / 2;
+
+    // Moves the line segment to the center
+    x1 -= center_x;  x2 -= center_x;
+    y1 -= center_y;  y2 -= center_y;
+
+    //Rotates Both Points
+    float xtemp = x1; float ytemp = y1;
+    x1 = -ytemp; y1 = xtemp;
+
+    xtemp = x2; ytemp = y2;
+    x2 = -ytemp; y2 = xtemp;
+
+    //Moves the line segment to the original position
+    x1 += center_x; x2 += center_x;
+    y1 += center_y; y2 += center_y;
+
+    //Setting new values
+    p1_.setX(x1); p1_.setY(y1);
+    p2_.setX(x2); p2_.setY(y2);
+
+    // Finding new X Y Coordinates for p3_ and p4_ based on new values
+    // NOT COPY PASTED CODE:
+    p3_.setX(x2); p3_.setY(y1);
+    p4_.setX(x1); p4_.setY(y2);
 }
 
 bool Rectangle::contains(const Point &p) const {
-
+    //TODO: Might need to remove this and finalise Line Segment, since this is the same as line segment
+    if(((getXmin() <= p.getX()) && (p.getX() <= getXmax()))
+       && ((getYmin() <= p.getY()) && (p.getY() <= getYmax()))){
+        return true;
+    }else{
+        return false;
+    }
 }
 
 void Rectangle::scale(float f) {
+    if(f <= 0){
+        throw std::invalid_argument("Scaling factor cannot be zero or negative");
+    }
+    // Getting X and Y coordinates of points
+    float x1 = p1_.getX(); float y1 = p1_.getY();
+    float x2 = p2_.getX(); float y2 = p2_.getY();
 
+    // Finds The center to rotate around
+    float center_x = (x1 + x2) / 2;
+    float center_y = (y1 + y2) / 2;
+
+    // Moves the line segment to the center
+    x1 -= center_x;  x2 -= center_x;
+    y1 -= center_y;  y2 -= center_y;
+
+    // Applies scaling to both points
+    x1 *= f; x2 *= f;
+    y1 *= f; y2 *= f;
+
+    //Moves the line segment to the original position
+    x1 += center_x; x2 += center_x;
+    y1 += center_y; y2 += center_y;
+
+    //Setting new values
+    p1_.setX(x1); p1_.setY(y1);
+    p2_.setX(x2); p2_.setY(y2);
+
+    // Finding new X Y Coordinates for p3_ and p4_ based on new values
+    // NOT COPY PASTED CODE:
+    p3_.setX(x2); p3_.setY(y1);
+    p4_.setX(x1); p4_.setY(y2);
+
+}
+
+float Rectangle::area() const {
+    return (getXmax()-getXmin())*(getYmax()-getYmin());
 }
 
 // ================== Circle class ===================
 
-Circle::Circle(const Point& c, float r) {
+Circle::Circle(const Point& c, float r) : TwoDShape(depth) {
 	// IMPLEMENT ME
+    if(r <= 0){
+        throw std::invalid_argument("Radius cannot be <= 0");
+    } else
+        p1_ = Point(c.getX(),c.getY(),c.getDepth());
+        r_ = r;
+        depth = c.getDepth();
+        dimension_ = 2;
+
 }
 
 float Circle::getX() const {
 	// IMPLEMENT ME
-	return -999; // dummy
+	return p1_.getX(); // dummy
 }
 
 float Circle::getY() const {
 	// IMPLEMENT ME
-	return -999; // dummy
+	return p1_.getY(); // dummy
 }
 
 float Circle::getR() const {
 	// IMPLEMENT ME
-	return -999; // dummy
+	return r_; // dummy
+}
+
+void Circle::setR(float r) {
+    r_ = r;
+}
+
+void Circle::translate(float x, float y) {
+    p1_.setX(p1_.getX() + x);
+    p1_.setY(p1_.getY() + y);
+}
+
+void Circle::scale(float f) {
+    if(f <= 0){
+        throw std::invalid_argument("Scaling factor cannot be zero or negative");
+    } else
+        setR((float)(r_ * f));
+
+
+
+}
+
+bool Circle::contains(const Point &p) const{
+    if( pow((p.getX() - p1_.getX()),2) + pow((p.getY() - p1_.getY()),2) < pow(r_,2) ){
+        return true;
+    } else
+        return false;
+}
+
+float Circle::area() const{
+    return PI*pow(r_,2);
 }
 
 // ================= Scene class ===================
