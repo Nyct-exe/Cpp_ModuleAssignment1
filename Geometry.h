@@ -41,13 +41,12 @@ public:
 	// Return true if the object contains p and false otherwise.
 	// Depths are ignored for purpose of comparison
     virtual
-	bool contains(const Point& p) const;
+	bool contains(const Point& p) const = 0;
 
 	// the constant pi
 	static constexpr double PI = 3.1415926;
 
 protected:
-    float x_, y_;
     int depth_;
     int dimension_;
 private:
@@ -68,9 +67,17 @@ public:
     void setX(float x);
     void setY(float y);
 
+    bool contains(const Point &p) const override;
+
+    void translate(float x, float y) override;
+
+    void rotate() override;
+
+    void scale(float f) override;
+
 private:
 	// add any member variables you need
-//    int depth;
+    float x_, y_;
 
 };
 

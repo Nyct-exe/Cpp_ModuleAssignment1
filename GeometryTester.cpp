@@ -855,9 +855,9 @@ void GeometryTester::testx() {
 
 	Scene s;
 	s.addObject(p1);
-//	s.addObject(l);
+	s.addObject(l);
 	s.addObject(r);
-//	s.addObject(c);
+	s.addObject(c);
 
 	string page = blankpage_;
 	for(int j=0;j<=9;j++)

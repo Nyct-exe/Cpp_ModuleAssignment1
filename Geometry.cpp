@@ -32,8 +32,6 @@ int Shape::dim() const {
 
 void Shape::translate(float x, float y) {
 	// IMPLEMENT ME
-    x_ = x_ + x;
-    y_ = y_ + y;
 }
 
 void Shape::rotate() {
@@ -50,13 +48,7 @@ void Shape::scale(float f) {
 }
 
 bool Shape::contains(const Point& p) const {
-	// IMPLEMENT ME (NOT FINISHED)
-    if(p.getX() == x_ && p.getY() == y_ ){
-        return true;
-    }
-    else{
-        return false; // dummy
-    }
+	// IMPLEMENT ME
 }
 
 // =============== Point class ================
@@ -88,6 +80,33 @@ void Point::setX(float x) {
 
 void Point::setY(float y) {
     y_ = y;
+}
+bool Point::contains(const Point &p) const {
+    if(p.getX() == x_ && p.getY() == y_ ){
+        return true;
+    }
+    else{
+        return false; // dummy
+    }
+}
+
+void Point::translate(float x, float y) {
+    x_ = x_ + x;
+    y_ = y_ + y;
+}
+
+void Point::rotate() {
+    // Can't Rotate a Point
+    // Does Nothing
+
+}
+
+void Point::scale(float f) {
+    // IMPLEMENT ME
+    // You can't scale a point, this is used just to check if scale is <= 0;
+    if(f <= 0){
+        throw std::invalid_argument("Scaling factor cannot be zero or negative");
+    }
 }
 
 
@@ -521,15 +540,25 @@ std::ostream& operator<<(std::ostream& out, const Scene& s) {
 	// IMPLEMENT ME
     // Draws a blank sheet
     char symbol = '*';
+    bool pointExists = false;
+    int lastX = 0;
+    int lastY = 0;
     for (int h = s.HEIGHT - 1; h >= 0; h--){
         for (int w = 0; w < s.WIDTH; w++){
             if(!s.shapeVector_.empty()){
                 for(auto it = std::begin(s.shapeVector_); it != std::end(s.shapeVector_); ++it) {
-                    if(it->get()->contains(Point(w,h))){
+                    if(it->get()->contains(Point(w,h)) && ((lastX != w) || (lastY != h))){
+                        //Remembers the Last Y and X coordinates to avoid spaces when one point exists and another doesn't
+                        lastX = w;
+                        lastY = h;
                         out.put(symbol);
+                        pointExists = true;
                     } else {
-                        out.put(' ');
+                        pointExists = false;
                     }
+                }
+                if( pointExists == false && ((lastX != w) || (lastY != h))){
+                    out.put(' ');
                 }
             } else {out.put(' ');}
         }
