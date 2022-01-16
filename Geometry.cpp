@@ -490,7 +490,7 @@ void Circle::scale(float f) {
 }
 
 bool Circle::contains(const Point &p) const{
-    if( pow((p.getX() - p1_.getX()),2) + pow((p.getY() - p1_.getY()),2) < pow(r_,2) ){
+    if( (float)(pow((p.getX() - p1_.getX()),2) + pow((p.getY() - p1_.getY()),2)) <= (float)(pow(r_,2)) ){
         return true;
     } else
         return false;
