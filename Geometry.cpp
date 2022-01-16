@@ -1,7 +1,8 @@
 #include "Geometry.h"
-#include <math.h>
+#include <cmath>
 #include <algorithm>
 #include <sstream>
+#include <climits>
 
 // ============ Shape class =================
 
@@ -9,7 +10,9 @@ Shape::Shape(int d) {
 	// IMPLEMENT ME
     if(d < 0){
         throw std::invalid_argument("Depth Cannot be negative");
-    }
+    } else
+        depth_ = 0;
+        dimension_ = 0;
 }
 
 bool Shape::setDepth(int d) {
@@ -522,8 +525,8 @@ float Circle::area() const{
 // ================= Scene class ===================
 
 Scene::Scene() {
-	// IMPLEMENT ME
-
+	// Setting initial depth to maximum Integer value in an unlikely scenario where depth is absurdly large
+    drawingDepth_ = INT_MAX;
 }
 
 void Scene::addObject(std::shared_ptr<Shape> ptr) {
@@ -541,14 +544,15 @@ std::ostream& operator<<(std::ostream& out, const Scene& s) {
     // Draws a blank sheet
     char symbol = '*';
     bool pointExists = false;
-    int lastX = 0;
-    int lastY = 0;
+    // Set as negatives on purpose to not overlap with existing points on the plane
+    int lastX = -1;
+    int lastY = -1;
     for (int h = s.HEIGHT - 1; h >= 0; h--){
         for (int w = 0; w < s.WIDTH; w++){
             if(!s.shapeVector_.empty()){
                 for(auto it = std::begin(s.shapeVector_); it != std::end(s.shapeVector_); ++it) {
-                    if(it->get()->contains(Point(w,h)) && ((lastX != w) || (lastY != h))){
-                        //Remembers the Last Y and X coordinates to avoid spaces when one point exists and another doesn't
+                    if(it->get()->contains(Point(w,h)) && ((lastX != w) || (lastY != h)) &&  it->get()->getDepth() <= s.drawingDepth_){
+                        //Remembers the Last Y and X coordinates to avoid spaces/clashes when one or both points exists or another doesn't
                         lastX = w;
                         lastY = h;
                         out.put(symbol);

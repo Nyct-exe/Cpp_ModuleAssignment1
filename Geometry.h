@@ -51,7 +51,6 @@ protected:
     int dimension_;
 private:
 	// add any protected/private member variables you need
-//    int dimension_;
 };
 
 class Point : public Shape {
