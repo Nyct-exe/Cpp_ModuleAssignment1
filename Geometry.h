@@ -3,6 +3,7 @@
 
 #include <iostream>
 #include <memory>
+#include <vector>
 
 class Point; // forward declaration
 
@@ -206,6 +207,8 @@ public:
 
 private:
 	// add any member variables you need
+    std::vector<std::shared_ptr<Shape>> shapeVector_;
+    int drawingDepth_;
 
 	// Draw objects as specified in the assignment page
 friend std::ostream& operator<<(std::ostream& out, const Scene& s);

@@ -1,5 +1,7 @@
 #include "Geometry.h"
 #include <math.h>
+#include <algorithm>
+#include <sstream>
 
 // ============ Shape class =================
 
@@ -502,18 +504,39 @@ float Circle::area() const{
 
 Scene::Scene() {
 	// IMPLEMENT ME
+
 }
 
 void Scene::addObject(std::shared_ptr<Shape> ptr) {
 	// IMPLEMENT ME
+    shapeVector_.push_back(ptr);
 }
 
 void Scene::setDrawDepth(int depth) {
 	// IMPLEMENT ME
+    drawingDepth_ = depth;
 }
 
 std::ostream& operator<<(std::ostream& out, const Scene& s) {
 	// IMPLEMENT ME
+    // Draws a blank sheet
+    char symbol = '*';
+    for (int h = s.HEIGHT - 1; h >= 0; h--){
+        for (int w = 0; w < s.WIDTH; w++){
+            if(!s.shapeVector_.empty()){
+                for(auto it = std::begin(s.shapeVector_); it != std::end(s.shapeVector_); ++it) {
+                    if(it->get()->contains(Point(w,h))){
+                        out.put(symbol);
+                    } else {
+                        out.put(' ');
+                    }
+                }
+            } else {out.put(' ');}
+        }
+        if( h != s.HEIGHT)
+            out.put('\n');
+    }
+
 	return out;
 }
 
