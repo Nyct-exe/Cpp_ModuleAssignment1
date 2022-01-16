@@ -14,6 +14,8 @@ public:
 //	// If your implementation is correct this should be removed
 	Shape() = delete;
 
+    virtual ~Shape();
+
 	// Constructor specifying the depth of the object.
 	// If d is negative, throw a std::invalid_argument exception.
 	Shape(int d);
@@ -23,20 +25,20 @@ public:
 	bool setDepth(int d);
 
 	// Return the depth of object
-	int getDepth() const;
+    int getDepth() const;
 
 	// Return the dimension_ of the object (0, 1 or 2)
 	int dim() const;
 
     virtual // Translate the object horizontally by x and vertically by y
-	void translate(float x, float y);
+	void translate(float x, float y) = 0;
 
     virtual // Rotate the object 90 degrees around its centre
-	void rotate();
+	void rotate() = 0;
 
     virtual // Scale the object by a factor f relative to its centre.
 	// If f is zero or negative, throw a std::invalid-argument exception.
-	void scale(float f);
+	void scale(float f) = 0;
 
 	// Return true if the object contains p and false otherwise.
 	// Depths are ignored for purpose of comparison
@@ -63,9 +65,11 @@ public:
 	float getX() const;
 	float getY() const;
 
+    // Sets X and Y Coordinates
     void setX(float x);
     void setY(float y);
 
+    // Override Functions of the Shape Class
     bool contains(const Point &p) const override;
 
     void translate(float x, float y) override;
@@ -98,6 +102,7 @@ public:
 	// Return the length of the line segment
 	float length() const;
 
+    // Override Functions of the Shape Class
     void translate(float x, float y) override;
 
     void rotate() override;
@@ -119,7 +124,7 @@ public:
 	// Similar comment to Student default constructor applies
     TwoDShape() = delete;
 
-
+    //Destructor
     virtual ~TwoDShape();
 
 
@@ -128,7 +133,7 @@ public:
 
 
     // Return the area of the object
-     virtual float area() const;
+     virtual float area() const = 0;
 
 protected:
 private:
@@ -149,6 +154,8 @@ public:
 	float getXmax() const;
 	float getYmax() const;
 
+
+    // Override Functions of the Shape Class
     void translate(float x, float y) override;
 
     bool contains(const Point &p) const override;
@@ -178,15 +185,19 @@ public:
 	float getY() const;
 	float getR() const;
 
-    bool contains(const Point &p) const;
-
-    void translate(float x, float y);
-
-    void scale(float f);
-
+    //Sets a radius of a circle
     void setR(float r);
 
+    // Override Functions of the Shape Class
+    bool contains(const Point &p) const;
+
+    void translate(float x, float y) override;
+
+    void scale(float f) override;
+
     float area() const override;
+
+    void rotate() override;
 
 private:
 	// add any member variables you need
